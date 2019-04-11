@@ -1,13 +1,13 @@
 package org.fedoravdeev.task05.streamapi;
 
-import java.text.ParseException;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 public class Qualification {
 	
@@ -15,54 +15,45 @@ public class Qualification {
 	private static final int FIRST_FIFTEEN_PLACE = 15;
 	private static final String LINE_SEPARATOR = "-";
 	private static final String DATE_FORMAT_QUALIFICATION = "yyyy-MM-dd_HH:mm:ss.SSS";
-	private static final String OUTPUT_FORMAT = "%-2d.%-17s | %-25s | %-11s\n";	
-	private final AtomicInteger count = new AtomicInteger();	
+	private static final String OUTPUT_FORMAT = "%2d. %s";
+	
 	private List<Pilot> listPilotsRacing;
 	
 	public Qualification() {
 		this.listPilotsRacing = new ArrayList<>();
 	}
 
-	public void getResultQualification() {
+	public List<String> getResultQualification() {
 		if (listPilotsRacing.isEmpty()) {
 			getListPilotsRacing();
 		}
-
-		listPilotsRacing.stream()
-			.sorted(Comparator.comparing(Pilot::getBestTime))
-			.limit(FIRST_FIFTEEN_PLACE)
-			.forEach(this::printLinePilot);		
-		listPilotsRacing.stream()
-			.limit(1)
-			.forEach(this::printLineSeparator);
-		listPilotsRacing.stream()
-			.sorted(Comparator.comparing(Pilot::getBestTime))
-			.skip(FIRST_FIFTEEN_PLACE)
-			.forEach(this::printLinePilot);
+		
+		listPilotsRacing.sort(Comparator.comparing(Pilot::getBestTime));
+		
+        print(IntStream.range(0, listPilotsRacing.size())
+                .mapToObj(i -> getLinePilot(i, listPilotsRacing))
+                .collect(Collectors.toList()));
+        return null;
+	}
+	
+    private void print(List<String> qualificationResult) {
+    	qualificationResult.forEach(System.out::print);
 	}
 
-	private void printLineSeparator(Pilot p) {
-		System.out.print(String.format(assemblyString(LINE_SEPARATOR, NUMBER_SYMBOLS_STRING) + "\n"));
-	}
-
-	private void printLinePilot(Pilot p) {		
-		System.out.print(String.format(OUTPUT_FORMAT,
-			count.incrementAndGet(),
-			p.getPilotName(),
-			p.getTeamName(), 
-			p.getStringBestTime()));
-	}
-
-	private String assemblyString(String symbol, int numberOfSymbols) {
-		StringBuilder stringSeparator = new StringBuilder();
-		for (int i = 0; i < numberOfSymbols; i++) {
-			stringSeparator.append(symbol);
-		}
-		return stringSeparator.toString();
+	private static String getLinePilot(int i, List<Pilot> pilots) {
+        return (i == FIRST_FIFTEEN_PLACE) ? (assemblyString(LINE_SEPARATOR, NUMBER_SYMBOLS_STRING) + "\n" + String.format(OUTPUT_FORMAT,
+                i + 1,
+                pilots.get(i).toString())) : (String.format(OUTPUT_FORMAT,
+                i + 1,
+                pilots.get(i).toString()));
+    }
+    
+	private static String assemblyString(String symbol, int numberOfSymbols) {
+		return IntStream.range(0, numberOfSymbols).mapToObj(i -> symbol).collect(Collectors.joining());
 	}
 
 	private List<Pilot> getListPilotsRacing() {
-
+		
 		List<String> listStartTime = ParseFiles.getSortedLinesFromFile("start.log");
 		List<String> listEndTime   = ParseFiles.getSortedLinesFromFile("end.log");
 		List<String> listPilots    = ParseFiles.getSortedLinesFromFile("abbreviations.txt");
