@@ -23,31 +23,29 @@ public class Qualification {
 		this.listPilotsRacing = new ArrayList<>();
 	}
 
-	public List<String> getResultQualification() {
+	public void getConsoleResultQualification() {
 		if (listPilotsRacing.isEmpty()) {
 			getListPilotsRacing();
 		}
 		
 		listPilotsRacing.sort(Comparator.comparing(Pilot::getBestTime));
 		
-        print(IntStream.range(0, listPilotsRacing.size())
-                .mapToObj(i -> getLinePilot(i, listPilotsRacing))
-                .collect(Collectors.toList()));
-        return null;
+		print(IntStream.range(0, listPilotsRacing.size())
+			.mapToObj(i -> getLinePilot(i, listPilotsRacing))
+			.collect(Collectors.toList()));
 	}
 	
-    private void print(List<String> qualificationResult) {
-    	qualificationResult.forEach(System.out::print);
+	private void print(List<String> qualificationResult) {
+		qualificationResult.forEach(System.out::print);
 	}
 
 	private static String getLinePilot(int i, List<Pilot> pilots) {
-        return (i == FIRST_FIFTEEN_PLACE) ? (assemblyString(LINE_SEPARATOR, NUMBER_SYMBOLS_STRING) + "\n" + String.format(OUTPUT_FORMAT,
-                i + 1,
-                pilots.get(i).toString())) : (String.format(OUTPUT_FORMAT,
-                i + 1,
-                pilots.get(i).toString()));
-    }
-    
+		return (i == FIRST_FIFTEEN_PLACE) ? 
+			(assemblyString(LINE_SEPARATOR, NUMBER_SYMBOLS_STRING) + "\n" + 
+				String.format(OUTPUT_FORMAT, i + 1, pilots.get(i).toString())) : 
+			(String.format(OUTPUT_FORMAT, i + 1, pilots.get(i).toString()));
+	}
+	
 	private static String assemblyString(String symbol, int numberOfSymbols) {
 		return IntStream.range(0, numberOfSymbols).mapToObj(i -> symbol).collect(Collectors.joining());
 	}
@@ -66,26 +64,18 @@ public class Qualification {
 
 	private Pilot getPilot(String lineStartTime, List<String> listTimeEnd, List<String> listPilots) {
 		LocalDateTime startTime = getQualificationTime(lineStartTime);
-		LocalDateTime endTime   = getQualificationTime(lineStartTime);
-		String fullNamePilot = null;
-		String nameTeamPilot = null;
-
-		for (String stringTimeEnd : listTimeEnd) {
-			if (stringTimeEnd.substring(0, 3).equals(lineStartTime.substring(0, 3))) {
-				endTime = getQualificationTime(stringTimeEnd);
-				break;
-			}
-		}
+		LocalDateTime endTime = listTimeEnd.stream()
+			.filter(stringTimeEnd -> stringTimeEnd.substring(0, 3).equals(lineStartTime.substring(0, 3)))
+			.findFirst()
+			.map(this::getQualificationTime)
+			.orElse(getQualificationTime(lineStartTime));
 		
-		for (String pilot : listPilots) {
-			if (pilot.substring(0, 3).equals(lineStartTime.substring(0, 3))) {
-				String[] allNames = pilot.split("_");
-				fullNamePilot = allNames[1];
-				nameTeamPilot = allNames[2];
-				break;
-			}
-		}
-		return new Pilot(lineStartTime.substring(0, 3), Duration.between(startTime, endTime), fullNamePilot, nameTeamPilot);
+		String[] pilotTeamName = listPilots.stream()
+			.filter(pilot -> lineStartTime.substring(0, 3).equals(pilot.substring(0, 3)))
+			.findFirst()
+			.map(pilot -> pilot.split("_"))
+			.orElse(null);
+		return new Pilot(lineStartTime.substring(0, 3), Duration.between(startTime, endTime), pilotTeamName[1], pilotTeamName[2]);
 	}
 
 	private LocalDateTime getQualificationTime(String lineStart) {

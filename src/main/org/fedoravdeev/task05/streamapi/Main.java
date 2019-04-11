@@ -6,6 +6,6 @@ public class Main {
 
 	public static void main(String[] args) throws ParseException {
 		Qualification qualification = new Qualification();
-		qualification.getResultQualification();
+		qualification.getConsoleResultQualification();
 	}
 }

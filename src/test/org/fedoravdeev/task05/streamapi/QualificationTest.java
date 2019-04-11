@@ -4,8 +4,6 @@ import static org.junit.Assert.assertEquals;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
-import java.text.ParseException;
-
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -13,11 +11,11 @@ public class QualificationTest {
 	
 	@Test
 	@DisplayName("should get result qualification from output")
-	public void shouldGetResultQualificationOut1() throws ParseException  {
+	public void shouldGetResultQualificationOut1() {
 		ByteArrayOutputStream outContent = new ByteArrayOutputStream();
-		System.setOut(new PrintStream(outContent));	
+		System.setOut(new PrintStream(outContent));
 		Qualification qualification = new Qualification();
-		qualification.getResultQualification();
+		qualification.getConsoleResultQualification();
 		String expectedOutput  = 
 				" 1. Daniel Ricciardo  | RED BULL RACING TAG HEUER | 01:12.013  \n" + 
 				" 2. Sebastian Vettel  | FERRARI                   | 01:12.415  \n" + 
