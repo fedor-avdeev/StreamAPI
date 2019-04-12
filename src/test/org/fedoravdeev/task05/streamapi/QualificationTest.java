@@ -8,7 +8,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 public class QualificationTest {
-	
+
 	@Test
 	@DisplayName("should get result qualification from output")
 	public void shouldGetResultQualificationOut1() {
@@ -16,7 +16,7 @@ public class QualificationTest {
 		System.setOut(new PrintStream(outContent));
 		Qualification qualification = new Qualification();
 		qualification.getConsoleResultQualification();
-		String expectedOutput  = 
+		String expectedOutput = 
 				" 1. Daniel Ricciardo  | RED BULL RACING TAG HEUER | 01:12.013  \n" + 
 				" 2. Sebastian Vettel  | FERRARI                   | 01:12.415  \n" + 
 				" 3. Valtteri Bottas   | MERCEDES                  | 01:12.434  \n" + 
