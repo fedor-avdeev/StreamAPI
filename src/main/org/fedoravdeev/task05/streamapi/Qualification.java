@@ -1,3 +1,4 @@
+package org.fedoravdeev.task05.streamapi;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -38,10 +39,12 @@ public class Qualification {
 	}
 
 	private List<Pilot> getListPilotsRacing() {
-		List<String> listStartTime = FileStore.getListStartTime();
-		List<String> listEndTime = FileStore.getListEndTime();
-		List<String> listPilots = FileStore.getListPilots();
-		return listStartTime.stream().map(lineStartTime -> getPilot(lineStartTime, listEndTime, listPilots))
+	    FileStore fileStore = new FileStore();
+		List<String> listStartTime = fileStore.getListStartTime();
+		List<String> listEndTime = fileStore.getListEndTime();
+		List<String> listPilots = fileStore.getListPilots();
+		return listStartTime.stream()
+				.map(lineStartTime -> getPilot(lineStartTime, listEndTime, listPilots))
 				.collect(toList());
 	}
 
@@ -49,11 +52,15 @@ public class Qualification {
 		LocalDateTime startTime = getQualificationTime(lineStartTime);
 		LocalDateTime endTime = listTimeEnd.stream()
 				.filter(stringTimeEnd -> stringTimeEnd.substring(0, 3).equals(lineStartTime.substring(0, 3)))
-				.findFirst().map(this::getQualificationTime).orElse(getQualificationTime(lineStartTime));
+				.findFirst()
+				.map(this::getQualificationTime)
+				.orElse(getQualificationTime(lineStartTime));
 
 		String[] pilotTeamName = listPilots.stream()
-				.filter(pilot -> lineStartTime.substring(0, 3).equals(pilot.substring(0, 3))).findFirst()
-				.map(pilot -> pilot.split("_")).orElseThrow(
+				.filter(pilot -> lineStartTime.substring(0, 3).equals(pilot.substring(0, 3)))
+				.findFirst()
+				.map(pilot -> pilot.split("_"))
+				.orElseThrow(
 						() -> new IllegalArgumentException("no matching pilot code:" + lineStartTime.substring(0, 3)));
 		return new Pilot(lineStartTime.substring(0, 3), Duration.between(startTime, endTime), pilotTeamName[1],
 				pilotTeamName[2]);

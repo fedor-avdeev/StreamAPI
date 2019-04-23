@@ -1,3 +1,4 @@
+package org.fedoravdeev.task05.streamapi;
 
 import static java.util.stream.Collectors.toList;
 
@@ -28,15 +29,15 @@ public class FileStore {
 		return new ArrayList<>();
 	}
 
-	public static List<String> getListStartTime() {
+	public List<String> getListStartTime() {
 		return listStartTime;
 	}
 
-	public static List<String> getListEndTime() {
+	public List<String> getListEndTime() {
 		return listEndTime;
 	}
 
-	public static List<String> getListPilots() {
+	public List<String> getListPilots() {
 		return listPilots;
 	}
 }

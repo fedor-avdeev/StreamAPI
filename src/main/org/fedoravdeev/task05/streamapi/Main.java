@@ -1,3 +1,4 @@
+package org.fedoravdeev.task05.streamapi;
 
 public class Main {
 
