@@ -1,4 +1,3 @@
-package org.fedoravdeev.task05.streamapi;
 
 import static java.util.stream.Collectors.toList;
 

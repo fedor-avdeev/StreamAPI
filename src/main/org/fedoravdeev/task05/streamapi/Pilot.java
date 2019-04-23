@@ -1,4 +1,3 @@
-package org.fedoravdeev.task05.streamapi;
 
 import java.time.Duration;
 
